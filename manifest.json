@@ -1,0 +1,59 @@
+{
+    "manifest_version": "0.3",
+    "name": "yandex-webmaster-mcp",
+    "display_name": "Yandex Webmaster",
+    "version": "0.1.0",
+    "description": "Query your Yandex Webmaster data — indexing, search queries, diagnostics and backlinks — and recrawl URLs, from an AI agent.",
+    "author": {
+        "name": "BoxLab",
+        "url": "https://github.com/BoxLab-Ltd"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BoxLab-Ltd/yandex-webmaster-mcp.git"
+    },
+    "homepage": "https://github.com/BoxLab-Ltd/yandex-webmaster-mcp#readme",
+    "license": "MIT",
+    "keywords": [
+        "yandex",
+        "webmaster",
+        "seo",
+        "search-console",
+        "indexing",
+        "mcp"
+    ],
+    "icon": "assets/icon-512.png",
+    "server": {
+        "type": "node",
+        "entry_point": "dist/index.js",
+        "mcp_config": {
+            "command": "node",
+            "args": ["${__dirname}/dist/index.js"],
+            "env": {
+                "YANDEX_WEBMASTER_HOST_ID": "${user_config.host_id}",
+                "YANDEX_WEBMASTER_TOKEN": "${user_config.token}"
+            }
+        }
+    },
+    "user_config": {
+        "host_id": {
+            "type": "string",
+            "title": "Host ID",
+            "description": "Default Yandex Webmaster host id, e.g. https:example.com:443 (optional — tools also take a hostId, and get_hosts lists your sites).",
+            "required": false
+        },
+        "token": {
+            "type": "string",
+            "title": "Static OAuth token",
+            "description": "Optional. Leave empty and sign in with the login tool. For CI/non-interactive use, paste a webmaster:hostinfo token — stored in your OS keychain.",
+            "sensitive": true,
+            "required": false
+        }
+    },
+    "compatibility": {
+        "platforms": ["darwin", "win32", "linux"],
+        "runtimes": {
+            "node": ">=18.0.0"
+        }
+    }
+}

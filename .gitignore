@@ -8,3 +8,7 @@ dist/
 coverage/
 *.tsbuildinfo
 .claude/settings.local.json
+
+# Desktop Extension (.mcpb) build artifacts
+.mcpb-build/
+*.mcpb
