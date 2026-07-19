@@ -16,7 +16,7 @@ export const SERVER_VERSION = pkg.version
  * to enable refresh). The app is registered with the `webmaster:hostinfo` and
  * `webmaster:verify` scopes.
  */
-export const EMBEDDED_OAUTH_CLIENT_ID = '8cae2852e92d47ab80fd3d37799ca853'
+export const EMBEDDED_OAUTH_CLIENT_ID = '1b4119ec1d584be6af98767ec0761476'
 
 /**
  * Resolved, validated runtime configuration for the server.
