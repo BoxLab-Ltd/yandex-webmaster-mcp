@@ -1,0 +1,33 @@
+{
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+    "name": "io.github.BoxLab-Ltd/yandex-webmaster-mcp",
+    "description": "Query Yandex Webmaster indexing, queries, diagnostics and backlinks, and recrawl, via an AI agent.",
+    "repository": {
+        "url": "https://github.com/BoxLab-Ltd/yandex-webmaster-mcp",
+        "source": "github"
+    },
+    "version": "0.1.0",
+    "packages": [
+        {
+            "registryType": "npm",
+            "identifier": "@boxlab/yandex-webmaster-mcp",
+            "version": "0.1.0",
+            "transport": {
+                "type": "stdio"
+            },
+            "environmentVariables": [
+                {
+                    "name": "YANDEX_WEBMASTER_TOKEN",
+                    "description": "Yandex Webmaster OAuth token (webmaster:hostinfo). Optional if you run the `auth` login.",
+                    "isRequired": false,
+                    "isSecret": true
+                },
+                {
+                    "name": "YANDEX_WEBMASTER_HOST_ID",
+                    "description": "Default host id, so tools may omit hostId.",
+                    "isRequired": false
+                }
+            ]
+        }
+    ]
+}

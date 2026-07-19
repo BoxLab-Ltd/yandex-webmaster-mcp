@@ -1,0 +1,65 @@
+{
+    "name": "@boxlab/yandex-webmaster-mcp",
+    "version": "0.1.0",
+    "description": "Model Context Protocol (MCP) server for Yandex Webmaster — query indexing, search queries, diagnostics and backlinks, and submit URLs for recrawl through an AI agent.",
+    "keywords": [
+        "mcp",
+        "model-context-protocol",
+        "yandex",
+        "webmaster",
+        "seo",
+        "search-console",
+        "indexing"
+    ],
+    "license": "MIT",
+    "mcpName": "io.github.BoxLab-Ltd/yandex-webmaster-mcp",
+    "publishConfig": {
+        "access": "public"
+    },
+    "homepage": "https://github.com/BoxLab-Ltd/yandex-webmaster-mcp#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/BoxLab-Ltd/yandex-webmaster-mcp.git"
+    },
+    "bugs": {
+        "url": "https://github.com/BoxLab-Ltd/yandex-webmaster-mcp/issues"
+    },
+    "type": "module",
+    "engines": {
+        "node": ">=18"
+    },
+    "bin": {
+        "yandex-webmaster-mcp": "dist/index.js"
+    },
+    "main": "dist/index.js",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc -p tsconfig.build.json",
+        "dev": "bun --watch src/index.ts",
+        "start": "node dist/index.js",
+        "auth": "bun src/index.ts auth",
+        "try": "bun scripts/try.ts",
+        "typecheck": "tsc -p tsconfig.json",
+        "lint": "eslint .",
+        "format": "prettier --write .",
+        "test": "bun test",
+        "test:watch": "bun test --watch",
+        "prepublishOnly": "npm run build"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.29.0",
+        "zod": "^4.4.3"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@types/bun": "^1.3.14",
+        "@types/node": "^26.1.1",
+        "eslint": "^10.5.0",
+        "eslint-config-prettier": "^10.1.8",
+        "prettier": "^3.8.4",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.61.0"
+    }
+}

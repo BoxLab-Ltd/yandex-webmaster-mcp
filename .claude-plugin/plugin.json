@@ -1,0 +1,21 @@
+{
+    "name": "yandex-webmaster-mcp",
+    "version": "0.1.0",
+    "description": "MCP server for Yandex Webmaster — query indexing, search queries, diagnostics and backlinks, and recrawl URLs, in plain language. Secretless PKCE login, read-only by default, TypeScript.",
+    "author": {
+        "name": "BoxLab",
+        "url": "https://github.com/BoxLab-Ltd"
+    },
+    "homepage": "https://github.com/BoxLab-Ltd/yandex-webmaster-mcp",
+    "repository": "https://github.com/BoxLab-Ltd/yandex-webmaster-mcp",
+    "license": "MIT",
+    "keywords": [
+        "mcp",
+        "yandex",
+        "yandex-webmaster",
+        "webmaster",
+        "seo",
+        "search-console",
+        "indexing"
+    ]
+}

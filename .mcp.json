@@ -1,0 +1,8 @@
+{
+    "mcpServers": {
+        "yandex-webmaster": {
+            "command": "npx",
+            "args": ["-y", "@boxlab/yandex-webmaster-mcp"]
+        }
+    }
+}

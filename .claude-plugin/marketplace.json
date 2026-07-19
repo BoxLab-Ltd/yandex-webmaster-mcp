@@ -1,0 +1,14 @@
+{
+    "name": "boxlab",
+    "owner": {
+        "name": "BoxLab",
+        "url": "https://github.com/BoxLab-Ltd"
+    },
+    "plugins": [
+        {
+            "name": "yandex-webmaster-mcp",
+            "source": "./",
+            "description": "MCP server for Yandex Webmaster — query indexing, search queries, diagnostics and backlinks, and recrawl URLs, in plain language. Secretless PKCE login, read-only by default, TypeScript."
+        }
+    ]
+}
