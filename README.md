@@ -1,5 +1,9 @@
 # Yandex Webmaster MCP
 
+[![CI](https://github.com/BoxLab-Ltd/yandex-webmaster-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/BoxLab-Ltd/yandex-webmaster-mcp/actions/workflows/ci.yml)
+[![npm](https://badgen.net/npm/v/@boxlab/yandex-webmaster-mcp)](https://www.npmjs.com/package/@boxlab/yandex-webmaster-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 Ask your Yandex Webmaster data in plain language — from Claude, Cursor, or any MCP client.
 
 > **Read-only by design** (plus URL recrawl), **no secrets stored**. Sign in with a
