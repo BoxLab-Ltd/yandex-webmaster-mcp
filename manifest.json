@@ -2,7 +2,7 @@
     "manifest_version": "0.3",
     "name": "yandex-webmaster-mcp",
     "display_name": "Yandex Webmaster",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Query your Yandex Webmaster data — indexing, search queries, diagnostics and backlinks — and recrawl URLs, from an AI agent.",
     "author": {
         "name": "BoxLab",

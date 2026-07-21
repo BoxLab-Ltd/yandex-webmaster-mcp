@@ -1,6 +1,6 @@
 {
     "name": "@boxlab/yandex-webmaster-mcp",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Model Context Protocol (MCP) server for Yandex Webmaster — query indexing, search queries, diagnostics and backlinks, and submit URLs for recrawl through an AI agent.",
     "keywords": [
         "mcp",
