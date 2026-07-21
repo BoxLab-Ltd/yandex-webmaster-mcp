@@ -1,6 +1,6 @@
 import { errorFromResponse, WebmasterApiError } from './errors.js'
 
-/** Query parameter values accepted by the client; arrays become CSV. */
+/** Query parameter values; arrays are sent as repeated keys (Webmaster convention), not CSV. */
 export type QueryParams = Record<
     string,
     string | number | boolean | Array<string | number> | undefined
@@ -196,8 +196,12 @@ export class WebmasterClient {
                     }
                     continue
                 }
+                // Transport failures are already mapped to WebmasterApiError in
+                // doFetch, so a non-API error here is a getToken/auth failure
+                // (e.g. not signed in) — retrying it just burns backoff, so fail
+                // fast and surface the actionable message.
                 const retryable =
-                    err instanceof WebmasterApiError ? err.isRetryable : true
+                    err instanceof WebmasterApiError ? err.isRetryable : false
                 if (!retryable || attempt >= this.maxRetries) throw err
                 await this.sleep(this.backoffDelay(attempt))
                 attempt += 1

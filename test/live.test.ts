@@ -1,3 +1,4 @@
+import { resolveTokenProvider } from '@boxlab/yandex-mcp-core'
 import { beforeAll, describe, expect, it } from 'bun:test'
 import { WebmasterClient } from '../src/api/client.js'
 import {
@@ -14,8 +15,7 @@ import {
     listHosts,
     listSitemaps,
 } from '../src/api/webmaster.js'
-import { resolveTokenProvider } from '../src/auth/resolve.js'
-import { loadConfig } from '../src/config.js'
+import { loadAuthConfig, loadConfig } from '../src/config.js'
 
 /**
  * Live end-to-end against the real Yandex Webmaster API — opt-in with `YW_LIVE=1`
@@ -37,7 +37,7 @@ suite('live: Webmaster (read-only)', () => {
 
     beforeAll(async () => {
         const config = loadConfig()
-        const { provider } = resolveTokenProvider(config)
+        const { provider } = resolveTokenProvider(loadAuthConfig())
         client = new WebmasterClient({
             baseUrl: config.baseUrl,
             getToken: () => provider.getAccessToken(),

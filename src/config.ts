@@ -1,4 +1,9 @@
 import { createRequire } from 'node:module'
+import {
+    cleanEnv,
+    loadYandexAuthConfig,
+    type YandexAuthConfig,
+} from '@boxlab/yandex-mcp-core'
 import { z } from 'zod'
 
 const require = createRequire(import.meta.url)
@@ -18,23 +23,27 @@ export const SERVER_VERSION = pkg.version
  */
 export const EMBEDDED_OAUTH_CLIENT_ID = '1b4119ec1d584be6af98767ec0761476'
 
+/** OAuth scopes the Webmaster tools need: read stats + read/write verification. */
+const SCOPE = 'webmaster:hostinfo webmaster:verify'
+
 /**
- * Resolved, validated runtime configuration for the server.
- *
- * Everything is sourced from environment variables so the server stays
- * stateless and secret-free on disk. See `.env.example` for the contract.
+ * Yandex ID OAuth host. `.ru` matches the redirect URI registered for the
+ * built-in Webmaster app; oauth.yandex.ru and oauth.yandex.com share a backend.
+ */
+const OAUTH_BASE_URL = 'https://oauth.yandex.ru'
+
+/**
+ * Token-cache dir segment (kept as the unscoped name so the path stays
+ * `~/.config/yandex-webmaster-mcp/token.json` even though the package is scoped).
+ */
+const APP_NAME = 'yandex-webmaster-mcp'
+
+/**
+ * Resolved, validated domain configuration for the server. Auth lives in a
+ * separate {@link YandexAuthConfig} (see {@link loadAuthConfig}); everything
+ * here is sourced from environment variables so the server stays stateless.
  */
 export interface Config {
-    /** Static Yandex Webmaster OAuth token (alternative to the `auth` login). */
-    readonly token?: string
-    /** OAuth client id used by `auth` — the embedded public client, or an override. */
-    readonly oauthClientId: string
-    /** True when using the user's own app (env override) rather than the embedded one. */
-    readonly oauthIsCustomApp: boolean
-    /** OAuth client secret (only for a user's own app; enables token refresh). */
-    readonly oauthClientSecret?: string
-    /** Yandex ID OAuth base URL. */
-    readonly oauthBaseUrl: string
     /** Optional default host id used when a tool call omits `hostId`. */
     readonly defaultHostId?: string
     /** API base URL (overridable only for tests/mocks). */
@@ -50,10 +59,6 @@ export interface Config {
 }
 
 const EnvSchema = z.object({
-    YANDEX_WEBMASTER_TOKEN: z.string().min(1).optional(),
-    YANDEX_OAUTH_CLIENT_ID: z.string().min(1).optional(),
-    YANDEX_OAUTH_CLIENT_SECRET: z.string().min(1).optional(),
-    YANDEX_OAUTH_BASE_URL: z.url().default('https://oauth.yandex.ru'),
     YANDEX_WEBMASTER_HOST_ID: z.string().min(1).optional(),
     YANDEX_WEBMASTER_BASE_URL: z
         .url()
@@ -66,11 +71,12 @@ const REQUEST_TIMEOUT_MS = 60_000
 const DEFAULT_ROW_LIMIT = 100
 
 /**
- * Load and validate configuration from the given environment (defaults to
- * `process.env`). Throws a single, human-readable error listing every problem.
+ * Load and validate domain configuration from the given environment (defaults
+ * to `process.env`). Throws a single, human-readable error listing every
+ * problem. Auth is loaded separately via {@link loadAuthConfig}.
  */
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
-    const parsed = EnvSchema.safeParse(env)
+    const parsed = EnvSchema.safeParse(cleanEnv(env))
     if (!parsed.success) {
         const issues = parsed.error.issues
             .map(i => `  - ${i.path.join('.')}: ${i.message}`)
@@ -81,13 +87,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     }
 
     const e = parsed.data
-    const isCustomApp = e.YANDEX_OAUTH_CLIENT_ID !== undefined
     return {
-        token: e.YANDEX_WEBMASTER_TOKEN,
-        oauthClientId: e.YANDEX_OAUTH_CLIENT_ID ?? EMBEDDED_OAUTH_CLIENT_ID,
-        oauthIsCustomApp: isCustomApp,
-        oauthClientSecret: e.YANDEX_OAUTH_CLIENT_SECRET,
-        oauthBaseUrl: e.YANDEX_OAUTH_BASE_URL,
         defaultHostId: e.YANDEX_WEBMASTER_HOST_ID,
         baseUrl: e.YANDEX_WEBMASTER_BASE_URL.replace(/\/+$/, ''),
         maxConcurrency: MAX_CONCURRENCY,
@@ -95,4 +95,21 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
         defaultRowLimit: DEFAULT_ROW_LIMIT,
         userAgent: `${SERVER_NAME}/${SERVER_VERSION}`,
     }
+}
+
+/**
+ * Load this server's Yandex auth configuration: the Webmaster scopes, the
+ * embedded public client (or a user's own app via `YANDEX_OAUTH_CLIENT_ID`),
+ * and the static-token env `YANDEX_WEBMASTER_TOKEN` (+ its `_FILE` override).
+ */
+export function loadAuthConfig(
+    env: NodeJS.ProcessEnv = process.env,
+): YandexAuthConfig {
+    return loadYandexAuthConfig(env, {
+        scope: SCOPE,
+        appName: APP_NAME,
+        embeddedClientId: EMBEDDED_OAUTH_CLIENT_ID,
+        staticTokenEnv: 'YANDEX_WEBMASTER_TOKEN',
+        oauthBaseUrl: OAUTH_BASE_URL,
+    })
 }

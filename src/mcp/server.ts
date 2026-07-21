@@ -1,8 +1,12 @@
+import {
+    registerLoginTools,
+    resolveTokenProvider,
+} from '@boxlab/yandex-mcp-core'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { WebmasterClient } from '../api/client.js'
-import { getUserId } from '../api/webmaster.js'
-import { resolveTokenProvider } from '../auth/resolve.js'
+import { createUserIdResolver } from '../api/webmaster.js'
 import {
+    loadAuthConfig,
     loadConfig,
     SERVER_NAME,
     SERVER_VERSION,
@@ -23,7 +27,8 @@ import { registerSearchQueries } from './tools/searchQueries.js'
  * context, and all registered tools. Transport is wired up by the caller.
  */
 export function createServer(config: Config = loadConfig()): McpServer {
-    const { provider, mode } = resolveTokenProvider(config)
+    const authConfig = loadAuthConfig()
+    const { provider, store, mode } = resolveTokenProvider(authConfig)
     // stderr only — stdout carries the MCP protocol on the stdio transport.
     console.error(`yandex-webmaster-mcp: auth source = ${mode}`)
 
@@ -37,19 +42,14 @@ export function createServer(config: Config = loadConfig()): McpServer {
         requestTimeoutMs: config.requestTimeoutMs,
     })
 
-    // The user id never changes for a token, so resolve it once and reuse it
-    // across every host-scoped tool call.
-    let userIdPromise: Promise<number> | undefined
     const ctx: ToolContext = {
         client,
         config,
-        getUserId: () => {
-            if (!userIdPromise) userIdPromise = getUserId(client)
-            return userIdPromise
-        },
+        getUserId: createUserIdResolver(client),
     }
 
     const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION })
+    registerLoginTools(server, { config: authConfig, provider, store })
     registerGetHosts(server, ctx)
     registerSearchQueries(server, ctx)
     registerGetIndexing(server, ctx)

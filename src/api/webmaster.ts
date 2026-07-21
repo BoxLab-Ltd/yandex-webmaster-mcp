@@ -53,6 +53,27 @@ export async function getUserId(client: WebmasterClient): Promise<number> {
     return UserSchema.parse(raw).user_id
 }
 
+/**
+ * Memoize the user id (it never changes for a token) across tool calls. A
+ * REJECTED lookup is deliberately NOT cached: on an unauthenticated boot the
+ * first call fails, but a later `login` must be able to re-resolve the user id
+ * without restarting the server.
+ */
+export function createUserIdResolver(
+    client: WebmasterClient,
+): () => Promise<number> {
+    let pending: Promise<number> | undefined
+    return () => {
+        if (!pending) {
+            pending = getUserId(client).catch((err: unknown) => {
+                pending = undefined
+                throw err
+            })
+        }
+        return pending
+    }
+}
+
 /** List the hosts (sites) the token can see, with their verification state. */
 export async function listHosts(
     client: WebmasterClient,
